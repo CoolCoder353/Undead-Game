@@ -98,6 +98,8 @@ public class EnemySpawner : MonoBehaviour
 
         // Add the cost back to the points spent
         currentPointsSpent -= cost;
+
+        PlayerController.Instance.AddScore(cost);
     }
 
 

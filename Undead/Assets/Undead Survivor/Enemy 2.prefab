@@ -76,7 +76,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 2
+  m_SortingOrder: 99
   m_Sprite: {fileID: -1199710013, guid: 4104ee12b4d54f54b91b3ba875787837, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 1
@@ -168,8 +168,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _id:
     Value: 0f38c231-f23b-4e96-978f-a68ee3376766
-  moveSpeed: 2
-  damage: 20
+  moveSpeed: 4
+  invertRotation: 1
+  damage: 30
   health: 250
   maxHealth: 250
   knockbackForce: 10

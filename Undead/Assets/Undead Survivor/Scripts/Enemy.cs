@@ -12,6 +12,8 @@ public class Enemy : MonoBehaviourID
     private Transform player;
     private Vector2 playerPos;
 
+    public bool invertRotation = false;
+
 
     public float damage = 10f;
     public float health = 100f;
@@ -47,6 +49,16 @@ public class Enemy : MonoBehaviourID
         Vector2 direction = playerPos - rb.position;
         direction.Normalize();
         movement = direction;
+
+        //Rotate left and right depending on the direction
+        if ((movement.x > 0 && invertRotation) || (movement.x < 0 && !invertRotation))
+        {
+            transform.localScale = new Vector3(-1, 1, 1);
+        }
+        else
+        {
+            transform.localScale = new Vector3(1, 1, 1);
+        }
         rb.MovePosition(rb.position + movement * moveSpeed * Time.fixedDeltaTime);
     }
 

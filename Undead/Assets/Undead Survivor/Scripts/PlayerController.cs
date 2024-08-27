@@ -9,6 +9,11 @@ public class PlayerController : MonoBehaviour
     private Animator animator;
     private Vector2 movement;
 
+
+    public GameObject DeadScreen;
+
+    public Vector2 maxDistance = new Vector2(15, 15);
+
     private bool shoot = false;
     public Transform firePoint;
     public GameObject bulletPrefab;
@@ -17,6 +22,8 @@ public class PlayerController : MonoBehaviour
 
     private float timeBtwShots;
 
+    public float pointsGained = 0;
+
 
 
     public float health = 100f;
@@ -24,9 +31,20 @@ public class PlayerController : MonoBehaviour
     public bool dead = false;
     public bool disableMovement = false;
 
+    public static PlayerController Instance;
+
     // Start is called before the first frame update
     void Start()
     {
+        if (Instance != null)
+        {
+            Destroy(gameObject);
+            return;
+        }
+        Instance = this;
+
+
+
         rb = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
     }
@@ -53,6 +71,12 @@ public class PlayerController : MonoBehaviour
         Shoot();
     }
 
+    public void AddScore(float points)
+    {
+        pointsGained += points;
+        PointsCounter.Instance.AddPoints(points);
+    }
+
     void OnCollisionEnter2D(Collision2D collision)
     {
         DetectHit(collision);
@@ -69,6 +93,7 @@ public class PlayerController : MonoBehaviour
         {
             StartCoroutine(KnockBack(collision, enemy));
             TakeDamage(enemy.damage);
+
         }
     }
 
@@ -86,6 +111,7 @@ public class PlayerController : MonoBehaviour
     void TakeDamage(float damage)
     {
         health -= damage;
+        HealthBar.Instance.SetHealth(health, maxHealth);
         if (health <= 0)
         {
             StartCoroutine(Die());
@@ -152,8 +178,39 @@ public class PlayerController : MonoBehaviour
             // Flip the player by rotating 180 degrees
             transform.rotation = Quaternion.Euler(0, 180, 0);
         }
+
+        //Only move the player if that wont make it go out of bounds
+        if (transform.position.x + movement.x * moveSpeed * Time.fixedDeltaTime > maxDistance.x ||
+            transform.position.x + movement.x * moveSpeed * Time.fixedDeltaTime < -maxDistance.x)
+        {
+            movement.x = 0;
+        }
+
+        if (transform.position.y + movement.y * moveSpeed * Time.fixedDeltaTime > maxDistance.y ||
+            transform.position.y + movement.y * moveSpeed * Time.fixedDeltaTime < -maxDistance.y)
+        {
+            movement.y = 0;
+        }
+
+        //Set the speed for the animation
+        animator.SetFloat("Speed", movement.magnitude);
+
         // Move the player
         rb.MovePosition(rb.position + movement * moveSpeed * Time.fixedDeltaTime);
+
+        // Clamp the player's position
+        Vector2 pos = transform.position;
+        pos.x = Mathf.Clamp(pos.x, -maxDistance.x, maxDistance.x);
+        pos.y = Mathf.Clamp(pos.y, -maxDistance.y, maxDistance.y);
+        transform.position = pos;
+
+    }
+
+
+    void OnDrawGizmosSelected()
+    {
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireCube(transform.position, maxDistance * 2);
     }
 
     IEnumerator Die()
@@ -174,6 +231,7 @@ public class PlayerController : MonoBehaviour
 
 
         animator.SetBool("Dead", true);
+        DeadScreen.SetActive(true);
         yield return null;
     }
 
