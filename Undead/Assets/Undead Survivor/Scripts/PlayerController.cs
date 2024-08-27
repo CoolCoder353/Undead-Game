@@ -216,6 +216,7 @@ public class PlayerController : MonoBehaviour
     IEnumerator Die()
     {
         dead = true;
+        TimeCounter.Instance.isCounting = false;
 
         //Hide all children
         foreach (Transform child in transform)

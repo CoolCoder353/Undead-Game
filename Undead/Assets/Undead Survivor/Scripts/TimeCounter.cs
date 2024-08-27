@@ -7,6 +7,7 @@ public class TimeCounter : MonoBehaviour
     public static TimeCounter Instance;
 
     public Text timeText;
+    public bool isCounting = true;
 
     public float time = 0f;
 
@@ -24,6 +25,7 @@ public class TimeCounter : MonoBehaviour
 
     void Update()
     {
+        if (!isCounting) { return; }
         time += Time.deltaTime;
         timeText.text = time.ToString("F2");
     }
